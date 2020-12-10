@@ -304,3 +304,62 @@ Test - [Epoch 10] Avg Loss: 0.049618, Accuracy: 98.290000 %
 ```
 
 ## 3.配置CNN训练参数
+这里我们设置 `BATCHSIZE` 为64，学习率 `LR` 为0.05，减少训练的Epoch数为5，每隔200个iteration输出一次训练损失值，训练另一个LeNet5模型。
+
+由于批量大小被修改，因此我们需要新的`trainloader`和`testloader`。 同样的，我们需要定义新的损失函数和优化器。
+
+``` Python
+# 使用新的（超参数）训练一个新的LeNet5模型
+BATCHSIZE = 64 # 批量大小
+LR = 0.05       # 学习率
+EPOCH = 5      # 迭代整个训练集的次数
+INTERVAL = 200  # 输出训练过程中间信息（损失值）的间隔
+
+# 新的dataloaders
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=BATCHSIZE,
+                                        shuffle=True, num_workers=2)
+testloader = torch.utils.data.DataLoader(testset, batch_size=BATCHSIZE,
+                                        shuffle=False, num_workers=2)
+
+# 新的训练模型
+net = LeNet5()
+net.to(device) # 将模型移动到对应的设备上(CPU or GPU)
+
+# 定义新的损失函数和优化器
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.SGD(net.parameters(), lr=LR)
+
+# 训练和测试
+# loop over the dataset multiple times
+for epoch in range(EPOCH):
+  train(epoch+1)
+  test(epoch+1)
+```
+结果如下：
+```
+Train - [Epoch 1 /Iteration 200] Loss: 1.847450
+Train - [Epoch 1 /Iteration 400] Loss: 0.400124
+Train - [Epoch 1 /Iteration 600] Loss: 0.198089
+Train - [Epoch 1 /Iteration 800] Loss: 0.140987
+Test - [Epoch 1] Avg Loss: 0.105098, Accuracy: 96.620000 %
+Train - [Epoch 2 /Iteration 200] Loss: 0.104183
+Train - [Epoch 2 /Iteration 400] Loss: 0.085888
+Train - [Epoch 2 /Iteration 600] Loss: 0.082229
+Train - [Epoch 2 /Iteration 800] Loss: 0.079476
+Test - [Epoch 2] Avg Loss: 0.059780, Accuracy: 97.900000 %
+Train - [Epoch 3 /Iteration 200] Loss: 0.066094
+Train - [Epoch 3 /Iteration 400] Loss: 0.062402
+Train - [Epoch 3 /Iteration 600] Loss: 0.059802
+Train - [Epoch 3 /Iteration 800] Loss: 0.053924
+Test - [Epoch 3] Avg Loss: 0.048369, Accuracy: 98.420000 %
+Train - [Epoch 4 /Iteration 200] Loss: 0.052968
+Train - [Epoch 4 /Iteration 400] Loss: 0.045956
+Train - [Epoch 4 /Iteration 600] Loss: 0.048635
+Train - [Epoch 4 /Iteration 800] Loss: 0.046136
+Test - [Epoch 4] Avg Loss: 0.040025, Accuracy: 98.700000 %
+Train - [Epoch 5 /Iteration 200] Loss: 0.041963
+Train - [Epoch 5 /Iteration 400] Loss: 0.039666
+Train - [Epoch 5 /Iteration 600] Loss: 0.034698
+Train - [Epoch 5 /Iteration 800] Loss: 0.038775
+Test - [Epoch 5] Avg Loss: 0.031983, Accuracy: 98.980000 %
+```
